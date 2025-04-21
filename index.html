@@ -278,7 +278,7 @@
           
           // Add rings to Saturn
           if (data.hasRings && data.name === "Saturn") {
-            log('Adding rings to Saturn...');
+            log('Adding rings to Saturn with texture...');
             
             // Create rings geometry
             const innerRadius = data.radius * 1.4;
@@ -287,12 +287,22 @@
             
             const ringsGeometry = new THREE.RingGeometry(innerRadius, outerRadius, segments);
             
-            // Create a custom texture for the rings or use a gradient
+            // Load Saturn rings texture with alpha channel
+            const ringsTexture = textureLoader.load('textures/2k_saturn_ring_alpha.png',
+              function() {
+                log('Saturn rings texture loaded successfully');
+              },
+              undefined,
+              function(err) {
+                log(`Error loading Saturn rings texture: ${err}`);
+              }
+            );
+            
             const ringsMaterial = new THREE.MeshStandardMaterial({
-              color: 0xf8e8c0,
+              map: ringsTexture,
               side: THREE.DoubleSide,
               transparent: true,
-              opacity: 0.8,
+              opacity: 0.9,
               roughness: 0.7,
               metalness: 0.2
             });
@@ -308,7 +318,7 @@
             // Add a slight tilt to Saturn (and consequently its rings)
             planet.rotation.x = 26.7 * Math.PI / 180; // Saturn's axial tilt
             
-            log('Saturn rings added');
+            log('Saturn rings with texture added');
           }
         });
         log(`${planets.length} planets created`);
