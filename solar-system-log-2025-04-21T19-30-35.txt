@@ -1,0 +1,56 @@
+[10:30:11 PM] [INFO] THREE.js loaded successfully
+[10:30:11 PM] [INFO] THREE.js version: 153
+[10:30:11 PM] [INFO] Creating scene...
+[10:30:11 PM] [INFO] Scene created
+[10:30:11 PM] [INFO] Creating camera...
+[10:30:11 PM] [INFO] Camera created and positioned
+[10:30:11 PM] [INFO] Creating renderer...
+[10:30:11 PM] [INFO] Renderer created and attached to DOM
+[10:30:11 PM] [INFO] Texture loader created
+[10:30:11 PM] [INFO] Setting up keyboard controls as fallback...
+[10:30:11 PM] [INFO] Keyboard controls set up (Use Arrow keys, +, -)
+[10:30:11 PM] [INFO] Checking OrbitControls...
+[10:30:11 PM] [WARNING] OrbitControls not available via THREE.OrbitControls
+[10:30:11 PM] [ERROR] OrbitControls not found. Using keyboard controls instead.
+[10:30:11 PM] [INFO] Using keyboard controls instead of OrbitControls
+[10:30:11 PM] [INFO] Adding lights...
+[10:30:11 PM] [INFO] Lights added
+[10:30:11 PM] [INFO] Creating sun...
+[10:30:11 PM] [INFO] Sun created
+[10:30:11 PM] [INFO] Creating planets...
+[10:30:11 PM] [INFO] Loading texture for Mercury: textures/8k_mercury.jpg
+[10:30:11 PM] [INFO] Loading texture for Venus: textures/2k_venus_surface.jpg
+[10:30:11 PM] [INFO] Loading texture for Earth: textures/2k_earth_daymap.jpg
+[10:30:11 PM] [INFO] Loading texture for Mars: textures/2k_mars.jpg
+[10:30:11 PM] [INFO] Loading texture for Jupiter: textures/2k_jupiter.jpg
+[10:30:11 PM] [INFO] Loading texture for Saturn: textures/2k_saturn.jpg
+[10:30:11 PM] [INFO] Adding rings to Saturn with texture...
+[10:30:11 PM] [INFO] Saturn rings with texture added
+[10:30:11 PM] [INFO] Loading texture for Uranus: textures/2k_uranus.jpg
+[10:30:11 PM] [INFO] Loading texture for Neptune: textures/2k_neptune.jpg
+[10:30:11 PM] [INFO] 8 planets created
+[10:30:11 PM] [INFO] Adding cloud layer to Earth...
+[10:30:11 PM] [INFO] Animation clock started
+[10:30:11 PM] [INFO] Axes helper added (Red=X, Green=Y, Blue=Z)
+[10:30:11 PM] [INFO] Adding Milky Way background...
+[10:30:11 PM] [INFO] Milky Way background added
+[10:30:11 PM] [INFO] Adding additional star particles...
+[10:30:11 PM] [INFO] Adding star background with varying illumination...
+[10:30:11 PM] [INFO] Star background with varying illumination added
+[10:30:11 PM] [INFO] Starting animation loop
+[10:30:12 PM] [INFO] Animation started
+[10:30:12 PM] [INFO] If you see a black screen, try using keyboard controls:
+[10:30:12 PM] [INFO] - Arrow Left/Right: Rotate camera
+[10:30:12 PM] [INFO] - Arrow Up/Down: Adjust camera height
+[10:30:12 PM] [INFO] - +/-: Zoom in/out
+[10:30:12 PM] [INFO] Sun texture loaded successfully
+[10:30:12 PM] [INFO] Mercury texture loaded successfully
+[10:30:12 PM] [INFO] Venus texture loaded successfully
+[10:30:12 PM] [INFO] Earth texture loaded successfully
+[10:30:12 PM] [INFO] Mars texture loaded successfully
+[10:30:12 PM] [INFO] Jupiter texture loaded successfully
+[10:30:12 PM] [INFO] Saturn texture loaded successfully
+[10:30:13 PM] [INFO] Saturn rings texture loaded successfully
+[10:30:13 PM] [INFO] Uranus texture loaded successfully
+[10:30:13 PM] [INFO] Neptune texture loaded successfully
+[10:30:13 PM] [INFO] Milky Way background texture loaded successfully

@@ -17,11 +17,63 @@
       transform: translate(-50%, -50%);
       pointer-events: none;
     }
+    #debug {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      color: white;
+      z-index: 100;
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      width: 300px;
+      font-family: monospace;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    #debug div {
+      margin-bottom: 2px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 2px;
+    }
+    #debug-controls {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 100;
+      background: rgba(0,0,0,0.5);
+      padding: 5px;
+      color: white;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+    #debug-controls button {
+      background: rgba(80,80,80,0.5);
+      color: white;
+      border: 1px solid #555;
+      padding: 3px 5px;
+      margin-left: 5px;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    #debug-controls button:hover {
+      background: rgba(100,100,100,0.7);
+    }
+    .timestamp {
+      color: #aaa;
+      margin-right: 5px;
+      font-size: 10px;
+    }
   </style>
 </head>
 <body>
-  <div id="debug" style="position: fixed; top: 10px; left: 10px; color: white; z-index: 100; background: rgba(0,0,0,0.5); padding: 10px;">
+  <div id="debug">
     Debugging Information Will Appear Here
+  </div>
+  <div id="debug-controls">
+    <button id="clear-log">Clear Log</button>
+    <button id="save-log">Save Log</button>
   </div>
 
   <!-- Load Three.js directly from unpkg CDN which is more reliable -->
@@ -29,13 +81,85 @@
   <script src="https://unpkg.com/three@0.153.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
-    // Debug function
+    // Debug function with auto-scroll and log file saving
     const debugElement = document.getElementById('debug');
-    function log(message) {
-      console.log(message);
-      debugElement.innerHTML += `<div>${message}</div>`;
+    const clearLogButton = document.getElementById('clear-log');
+    const saveLogButton = document.getElementById('save-log');
+    
+    // Initialize log array to store all debug messages
+    let logHistory = [];
+    
+    function log(message, level = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      console.log(`[${timestamp}] ${message}`);
+      
+      // Store in log history
+      logHistory.push({ timestamp, message, level });
+      
+      // Create log entry with timestamp
+      const logEntry = document.createElement('div');
+      logEntry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+      
+      // Add color based on log level
+      if (level === 'error') {
+        logEntry.style.color = '#ff6b6b';
+      } else if (level === 'warning') {
+        logEntry.style.color = '#feca57';
+      }
+      
+      // Clear the initial text if it's the first log entry
+      if (debugElement.textContent === 'Debugging Information Will Appear Here') {
+        debugElement.textContent = '';
+      }
+      
+      debugElement.appendChild(logEntry);
+      
+      // Auto-scroll to bottom
+      debugElement.scrollTop = debugElement.scrollHeight;
     }
-
+    
+    // Log error messages with red color
+    function logError(message) {
+      log(message, 'error');
+    }
+    
+    // Log warning messages with yellow color
+    function logWarning(message) {
+      log(message, 'warning');
+    }
+    
+    // Clear log function
+    clearLogButton.addEventListener('click', function() {
+      debugElement.innerHTML = '';
+      log('Log cleared');
+    });
+    
+    // Save log to file
+    saveLogButton.addEventListener('click', function() {
+      // Convert log history to text
+      const logText = logHistory.map(entry => 
+        `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}`
+      ).join('\n');
+      
+      // Create blob and download link
+      const blob = new Blob([logText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `solar-system-log-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      log('Log saved to file');
+    });
+    
     // Global variables that need to be accessed by animate()
     let scene, camera, renderer, controls, sun, planets, clock;
     let planetLabels = []; // Array to store planet label elements
@@ -45,7 +169,7 @@
     window.onload = function() {
       // Check if THREE is loaded
       if (typeof THREE === 'undefined') {
-        log('ERROR: THREE is not defined - Three.js library not loaded correctly');
+        logError('THREE is not defined - Three.js library not loaded correctly');
       } else {
         log('THREE.js loaded successfully');
         log(`THREE.js version: ${THREE.REVISION}`);
@@ -79,7 +203,7 @@
 
         // Check WebGL compatibility
         if (!renderer.capabilities.isWebGL2) {
-          log('WARNING: WebGL2 not supported. Using WebGL1 fallback');
+          logWarning('WebGL2 not supported. Using WebGL1 fallback');
         }
 
         // Create texture loader
@@ -121,13 +245,13 @@
         log('Checking OrbitControls...');
         controls = null;
         if (typeof THREE.OrbitControls === 'undefined') {
-          log('OrbitControls not available via THREE.OrbitControls');
+          logWarning('OrbitControls not available via THREE.OrbitControls');
           // Try the module approach as a fallback
           if (window.THREE && window.THREE.OrbitControls) {
             log('Found OrbitControls via window.THREE.OrbitControls');
             controls = new window.THREE.OrbitControls(camera, renderer.domElement);
           } else {
-            log('ERROR: OrbitControls not found. Using keyboard controls instead.');
+            logError('OrbitControls not found. Using keyboard controls instead.');
           }
         } else {
           log('OrbitControls available');
@@ -182,7 +306,7 @@
               undefined,
               // Error callback
               function(err) {
-                log(`Error loading ${name} texture: ${err}`);
+                logError(`Error loading ${name} texture: ${err}`);
               }
             );
             
@@ -235,7 +359,7 @@
           undefined,
           // Error callback
           function(err) {
-            log(`Error loading Sun texture: ${err}`);
+            logError(`Error loading Sun texture: ${err}`);
           }
         );
         
@@ -294,7 +418,7 @@
               },
               undefined,
               function(err) {
-                log(`Error loading Saturn rings texture: ${err}`);
+                logError(`Error loading Saturn rings texture: ${err}`);
               }
             );
             
@@ -351,7 +475,7 @@
           },
           undefined,
           function(err) {
-            log(`Error loading Milky Way background: ${err}`);
+            logError(`Error loading Milky Way background: ${err}`);
           }
         );
         
@@ -416,7 +540,7 @@
         });
 
       } catch (error) {
-        log(`ERROR: ${error.message}`);
+        logError(`${error.message}`);
         console.error(error);
       }
     }
@@ -426,7 +550,7 @@
         requestAnimationFrame(animate);
         
         if (!clock) {
-          log("ERROR: Animation variables not initialized");
+          logError("Animation variables not initialized");
           return;
         }
         
@@ -451,7 +575,7 @@
 
         renderer.render(scene, camera);
       } catch (error) {
-        log(`ERROR in animation: ${error.message}`);
+        logError(`Animation error: ${error.message}`);
         console.error(error);
       }
     }
