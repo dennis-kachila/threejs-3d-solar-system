@@ -257,7 +257,7 @@
           { radius: 1.3, color: 0x2233ff, distance: 20, speed: 0.01, name: "Earth", texture: "textures/2k_earth_daymap.jpg" },
           { radius: 1.0, color: 0xff3300, distance: 24, speed: 0.008, name: "Mars", texture: "textures/2k_mars.jpg" },
           { radius: 3.5, color: 0xffccaa, distance: 32, speed: 0.005, name: "Jupiter", texture: "textures/2k_jupiter.jpg" },
-          { radius: 2.9, color: 0xeecc66, distance: 38, speed: 0.004, name: "Saturn", texture: "textures/2k_saturn.jpg" },
+          { radius: 2.9, color: 0xeecc66, distance: 38, speed: 0.004, name: "Saturn", texture: "textures/2k_saturn.jpg", hasRings: true },
           { radius: 2.0, color: 0x99ccff, distance: 44, speed: 0.003, name: "Uranus", texture: "textures/2k_uranus.jpg" },
           { radius: 1.8, color: 0x3355dd, distance: 50, speed: 0.002, name: "Neptune", texture: "textures/2k_neptune.jpg" }
         ];
@@ -275,6 +275,41 @@
           const angle = Math.random() * Math.PI * 2;
           planet.position.x = Math.cos(angle) * data.distance;
           planet.position.z = Math.sin(angle) * data.distance;
+          
+          // Add rings to Saturn
+          if (data.hasRings && data.name === "Saturn") {
+            log('Adding rings to Saturn...');
+            
+            // Create rings geometry
+            const innerRadius = data.radius * 1.4;
+            const outerRadius = data.radius * 2.5;
+            const segments = 64;
+            
+            const ringsGeometry = new THREE.RingGeometry(innerRadius, outerRadius, segments);
+            
+            // Create a custom texture for the rings or use a gradient
+            const ringsMaterial = new THREE.MeshStandardMaterial({
+              color: 0xf8e8c0,
+              side: THREE.DoubleSide,
+              transparent: true,
+              opacity: 0.8,
+              roughness: 0.7,
+              metalness: 0.2
+            });
+            
+            const rings = new THREE.Mesh(ringsGeometry, ringsMaterial);
+            
+            // Rotate rings to be horizontal around Saturn
+            rings.rotation.x = Math.PI / 2;
+            
+            // Add rings as a child of Saturn so they move with it
+            planet.add(rings);
+            
+            // Add a slight tilt to Saturn (and consequently its rings)
+            planet.rotation.x = 26.7 * Math.PI / 180; // Saturn's axial tilt
+            
+            log('Saturn rings added');
+          }
         });
         log(`${planets.length} planets created`);
         
